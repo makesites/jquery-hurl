@@ -1,14 +1,12 @@
 /*!
- * hURL (hash URL) v1.0
- * http://makesites.org/hurl/
- * by Makis Tracend (@tracend)
+ * hURL (hash URL) v1.1
+ * by Makis Tracend (makis@makesit.es)
  *
  * Parses the hash URL and attaches an object to the body tag
  * with its properties for easy retrieval/update
  *
  * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://www.opensource.org/licenses/mit-license.php
- * http://www.gnu.org/licenses/gpl-2.0.html
+ * http://jquery.org/license
  *
  * 
  * TIPS:
@@ -45,7 +43,8 @@
 		  'delimiter' : "/", 
 		  'initiator' : "!", 
 		  'pair' : true, 
-		  'monitor' : false 
+		  'monitor' : false, 
+		  'meta' : true
 		};
 		
 		return this.each(function() {
@@ -69,6 +68,12 @@
 				if( settings.monitor ){ 
 					// start monitoring the hash events
 					$this.hurl("monitor");
+				}
+				
+				if( settings.meta ){ 
+					$("body").bind('hurl', function(event) {
+						$this.hurl("meta");
+					});
 				}
 				
 			} else {
@@ -167,7 +172,7 @@
 				$this.hurl("register");
 				
 				// trigger the update for all scripts listening
-				$this.trigger("hurl", "manual");
+				$this.trigger("hurl", "request");
 			}
 						
 		});
@@ -187,6 +192,9 @@
 				
 				// register click
 				$this.hurl("register");
+				
+				// trigger the update for all scripts listening
+				$this.trigger("hurl", "update");
 			}
 			
 			
@@ -211,6 +219,18 @@
 			location = url;
 			$a.remove();
 						
+		});
+	},
+	
+	meta : function( ) { 
+		return this.each(function(){
+
+		var $this = $(this),
+             data = $this.data('hurl');
+			
+			$("meta[property='og:title']").attr("content", document.title);
+			$("meta[property='og:url']").attr("content", document.location.href);
+			// $("meta[property='og:description']").attr("content", ...);
 		});
 	},
 	
